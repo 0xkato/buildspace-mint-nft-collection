@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.1;
 
-// We need some util functions for strings.
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "hardhat/console.sol";
-
-import "./libraries/Base64.sol";
+import { Base64 } from "./libraries/Base64.sol";
 
 contract MyEpicNFT is ERC721URIStorage {
 
@@ -24,7 +22,9 @@ string[] secondWords = ["burger", "pasta", "soup", "curry", "antipasti", "risott
 
 string[] thirdWords = ["pleasure", "amusement", "pride", "unhappy", "miserable", "nervous", "scared", "anxious", "frustrated", "insulted", "revulsion", "offended", "delighted"];
 
-   constructor() ERC721 ("SquareNFT", "SQUARE") {
+event NewEpicNFTMinted(address sender, uint256 tokenId);
+
+  constructor() ERC721 ("SquareNFT", "SQUARE") {
     console.log("This is my NFT contract. Woah!");
   }
 
@@ -50,7 +50,13 @@ string[] thirdWords = ["pleasure", "amusement", "pride", "unhappy", "miserable",
       return uint256(keccak256(abi.encodePacked(input)));
   }
 
+  function getTotalNFTsMintedSoFar() public view returns (uint256){
+      uint256 totalMints = _tokenIds.current();
+      return totalMints;
+    }
+
   function makeAnEpicNFT() public {
+    require(_tokenIds.current() < 49, "all 50 have been minted");
     uint256 newItemId = _tokenIds.current();
 
     string memory first = pickRandomFirstWord(newItemId);
@@ -87,11 +93,11 @@ string[] thirdWords = ["pleasure", "amusement", "pride", "unhappy", "miserable",
     console.log("--------------------\n");
 
     _safeMint(msg.sender, newItemId);
-    
-    // Update your URI!!!
+  
     _setTokenURI(newItemId, finalTokenUri);
   
     _tokenIds.increment();
     console.log("An NFT w/ ID %s has been minted to %s", newItemId, msg.sender);
+    emit NewEpicNFTMinted(msg.sender, newItemId);
   }
 }

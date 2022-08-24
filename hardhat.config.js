@@ -1,5 +1,5 @@
-require("@nomicfoundation/hardhat-toolbox");
-require('@nomiclabs/hardhat-waffle');
+require("@nomiclabs/hardhat-ethers");
+require("@nomicfoundation/hardhat-chai-matchers");
 require("dotenv").config({ path: ".env" });
 
 module.exports = {
